@@ -13,7 +13,8 @@ constexpr int kMotorDirectionA2 = 8;
 constexpr int kMotorDirectionB1 = 9;
 constexpr int kMotorDirectionB2 = 11;
 
-constexpr long kCheckInterval = 2800;  // interval to wait for (milliseconds)
+// constexpr long kCheckInterval = 2800;  // interval to wait for (milliseconds)
+constexpr long kCheckInterval = 500;  // interval to wait for (milliseconds)
 constexpr long kForwardInterval = 1000;
 constexpr int kCarSpeed = 150;
 
@@ -21,15 +22,6 @@ Servo my_servo;  // create servo object to control servo
 
 int echo_pin = A4;
 int trig_pin = A5;
-
-class ObstacleDistances {
- public:
-  int left;
-  int middle;
-  int right;
-
-  ObstacleDistances() : left(0), middle(0), right(0) {}
-};
 
 class Car {
  public:
@@ -112,28 +104,26 @@ class Car {
     return static_cast<int>(distance);
   }
 
-  ObstacleDistances CheckObstacle() {
-    ObstacleDistances distances;
-
+  int CheckObstacle() {
     my_servo.write(90);  // Center
-    delay(250);
-    distances.middle = MeasureDistance();
-    delay(250);
+    // delay(250);
+    int middle_distance = MeasureDistance();
+    // delay(250);
 
-    my_servo.write(0);  // Left
-    delay(250);
-    distances.left = MeasureDistance();
-    delay(250);
+    // my_servo.write(0);  // Left
+    // delay(250);
+    // distances.left = MeasureDistance();
+    // delay(250);
 
-    my_servo.write(180);  // Right
-    delay(250);
-    distances.right = MeasureDistance();
-    delay(250);
+    // my_servo.write(180);  // Right
+    // delay(250);
+    // distances.right = MeasureDistance();
+    // delay(250);
 
-    my_servo.write(90);  // Center
-    delay(250);
+    // my_servo.write(90);  // Center
+    // delay(250);
 
-    return distances;
+    return middle_distance;
   }
 
  private:
@@ -155,9 +145,9 @@ void loop() {
 
   if (obstacle_timer.Elapsed()) {
     car.StopCar();
-    ObstacleDistances distances = car.CheckObstacle();
+    int distance_middle = car.CheckObstacle();
 
-    if (distances.middle < 20 || distances.left < 50 || distances.right < 50) {
+    if (distance_middle < 20 /*  || distances.left < 50 || distances.right < 50 */) {
       can_go_forward = false;
     } else {
       can_go_forward = true;
